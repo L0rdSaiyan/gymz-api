@@ -1,7 +1,7 @@
 #
 # @author Victor Sales
 #
-
+import os
 from flask import Flask, jsonify, request
 from database.database import db
 from database.user import Users
