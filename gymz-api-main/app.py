@@ -1,14 +1,16 @@
 #
 # @author Victor Sales
 #
-import os
+
 from flask import Flask, jsonify, request
 from database.database import db
 from database.user import Users
 from database.exercice import Exercices
 from database.user_exercice import UserExercices
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
 
 @app.before_request
 def before_request():
@@ -66,6 +68,7 @@ def update_upser(id):
         return jsonify({'error': str(e)})
 
 @app.route('/api/create_user', methods=['POST'])
+@cross_origin()
 def create_user():
     new_user = request.get_json()
 
@@ -203,6 +206,4 @@ def get_user_exercice(id):
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
-
-
+    app.run(debug=True)
