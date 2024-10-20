@@ -1,7 +1,7 @@
 #
 # @author Victor Sales
 #
-import os
+
 from flask import Flask, jsonify, request
 from database.database import db
 from database.user import Users
@@ -22,10 +22,28 @@ def teardown_request(exception):
     if not db.is_closed():
         db.close()
 
-@app.route('/api/get_users', methods=['GET'])
-def get_users():
+@app.route('/api/get_all_users', methods=["GET"])
+def get_all_users():
     try:
         users = Users.select()
+        usersList = []
+        for user in users:
+            usersList.append({
+                'id' : user.id,
+                'name': user.name,
+                'email': user.email
+            })
+        return jsonify(usersList), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}),400
+
+@app.route('/api/get_users', methods=['GET'])
+def get_users():
+    page = request.args.get('page',1, type=int)
+    itens = request.args.get('itens', 10, type=int)
+    try:
+        users = Users.select().paginate(page,itens)
+        total_users = Users.select().count()
 
         user_list = []
         for user in users:
@@ -206,4 +224,4 @@ def get_user_exercice(id):
         return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
+    app.run(debug=True)
