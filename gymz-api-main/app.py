@@ -71,6 +71,30 @@ def get_user(id):
     except Exception as e:
         return jsonify({'error': str(e)})
 
+@app.route('/api/get_user_by_email_password', methods=['POST'])
+def get_user_by_email_password():
+    requestBody = request.get_json()
+    email = requestBody.get('email')
+    password = requestBody.get('password')
+    print(request.data)  # Para depuração
+
+    try:
+        user = Users.get(Users.email == email, Users.password == password)
+        
+        return jsonify({
+            'id': user.id,
+            'name': user.name,
+            'password': user.password,
+            'email': user.email
+        })
+
+    except Users.DoesNotExist:
+        return jsonify({'error': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+        
 @app.route('/api/update_user/<int:id>', methods=['PUT'])
 def update_upser(id):
     
@@ -225,4 +249,3 @@ def get_user_exercice(id):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
-    app.run(debug=True)
