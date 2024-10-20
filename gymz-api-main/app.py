@@ -8,7 +8,7 @@ from database.user import Users
 from database.exercice import Exercices
 from database.user_exercice import UserExercices
 from flask_cors import CORS, cross_origin
-
+import os
 app = Flask(__name__)
 CORS(app)
 
