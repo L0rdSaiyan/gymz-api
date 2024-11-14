@@ -188,17 +188,31 @@ def create_exercice():
     new_exercice = request.get_json()
 
     try:
-        new_exercice = Exercices.create(
-            id = new_exercice.get('id'),
+        created_exercice = Exercices.create(
             name = new_exercice.get('name'),
             series = new_exercice.get('series'),
             repeats = new_exercice.get('repeats'),
             days = new_exercice.get('days')
         )
-            
-        return jsonify({'id': new_exercice.id, 'name': new_exercice.name, 'series': new_exercice.series, 'repeats': new_exercice.repeats, 'days': new_exercice.days}), 200
+
+        user_id = new_exercice.get('userId') 
+        exercice_id = created_exercice.id
+
+        new_user_exercice = UserExercices.create(
+            user_id = user_id,
+            exercice_id = exercice_id
+        )
+
+        return jsonify({
+            'id': created_exercice.id,
+            'name': created_exercice.name,
+            'series': created_exercice.series,
+            'repeats': created_exercice.repeats,
+            'days': created_exercice.days
+        }), 200
     except Exception as e:
-        return jsonify({'error': str(e)}),400
+        return jsonify({'error': str(e)}), 400
+
     
 @app.route('/api/delete_exercice/<int:id>', methods=['DELETE'])
 def delete_exercice(id):
